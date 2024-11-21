@@ -197,6 +197,7 @@
             MaximumSize = new Size(816, 489);
             Name = "Client";
             Text = "Client";
+            Load += Client_Load;
             pnlList.ResumeLayout(false);
             pnlMain.ResumeLayout(false);
             pnlInput.ResumeLayout(false);

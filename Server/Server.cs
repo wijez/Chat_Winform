@@ -133,7 +133,7 @@ namespace Server
             {
                 lblMessage.BackColor = Color.LightGreen;
             }
-            else if(message.StartsWith("Client:"))
+            else if (message.StartsWith("Client:"))
             {
                 lblMessage.BackColor = Color.AliceBlue;
             }
@@ -210,7 +210,7 @@ namespace Server
                     ForeColor = Color.Gray
                 };
 
-              
+
                 flowLayoutPanel1.Controls.Add(pictureBox);
                 flowLayoutPanel1.ScrollControlIntoView(pictureBox);
             }
@@ -246,66 +246,32 @@ namespace Server
 
         private async Task HandleClient(TcpClient client)
         {
-            //try
-            //{
-            //    NetworkStream stream = client.GetStream();
-            //    byte[] buffer = new byte[1024];
-            //    int bytesRead;
-
-            //    while ((bytesRead = await stream.ReadAsync(buffer, 0, buffer.Length)) > 0)
-            //    {
-            //        string message = Encoding.UTF8.GetString(buffer, 0, bytesRead);
-            //        if (flowLayoutPanel1.InvokeRequired)
-            //        {
-            //            flowLayoutPanel1.Invoke(new Action(() => DisplayMessage($"Client: {message}")));
-            //        }
-            //        else
-            //        {
-            //            DisplayMessage($"Client: {message}");
-            //        }
-
-            //        await BroadcastMessage($"Server broadcast: {message}", client);
-            //    }
-            //}
-            //catch (Exception ex)
-            //{
-            //    MessageBox.Show($"Error accepting client: {ex.Message}");
-            //}
             try
             {
                 NetworkStream stream = client.GetStream();
-                byte[] buffer = new byte[1024 * 1024 * 5]; // Buffer size for larger files
+                byte[] buffer = new byte[1024];
                 int bytesRead;
 
                 while ((bytesRead = await stream.ReadAsync(buffer, 0, buffer.Length)) > 0)
                 {
                     string message = Encoding.UTF8.GetString(buffer, 0, bytesRead);
-
-                    if (message.StartsWith("IMAGE:"))
+                    if (flowLayoutPanel1.InvokeRequired)
                     {
-                        await HandleImageMessage(message, client);
+                        flowLayoutPanel1.Invoke(new Action(() => DisplayMessage($"Client: {message}")));
                     }
-                    //else if (message.StartsWith("FILE:"))
-                    //{
-                    //    await HandleFileMessage(message, client);
-                    //}
-                    //else if (message.StartsWith("EMOJI:"))
-                    //{
-                    //    await HandleEmojiMessage(message, client);
-                    //}
-                    //else
-                    //{
-                    //    // Handle normal message
-                    //    await HandleNormalMessage(message, client);
-                    //}
+                    else
+                    {
+                        DisplayMessage($"Client: {message}");
+                    }
+
+                    await BroadcastMessage($"Server broadcast: {message}", client);
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error handling client {client.Client.RemoteEndPoint}: {ex.Message}");
-                connectedClients.Remove(client); // Ensure the client is removed from the list on error
-                client.Close();
+                MessageBox.Show($"Error accepting client: {ex.Message}");
             }
+
         }
 
         private async Task HandleImageMessage(string message, TcpClient client)
@@ -371,7 +337,7 @@ namespace Server
         {
             while (true)
             {
-                await ReceiveMessage();  
+                await ReceiveMessage();
             }
         }
 
@@ -448,7 +414,6 @@ namespace Server
                 await BroadcastMessage(message);
 
                 DisplayImage(imagePath);
-                DisplayMessage($"Server sent an image");
             }
             catch (Exception ex)
             {
@@ -494,6 +459,11 @@ namespace Server
         }
 
         private void flowLayoutPanel1_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
+
+        private void label1_Click(object sender, EventArgs e)
         {
 
         }

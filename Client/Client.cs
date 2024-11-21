@@ -24,7 +24,6 @@ namespace Client
         {
             InitializeComponent();
             ConfigureFlowLayoutPanel();
-            AddClearAllButton();
         }
 
         private void ConnectToServer()
@@ -45,96 +44,18 @@ namespace Client
 
         private async Task ReceiveMessage()
         {
-            //try
-            //{
-            //    byte[] buffer = new byte[1024];
-            //    int bytesRead;
-
-            //    while ((bytesRead = await networkStream.ReadAsync(buffer, 0, buffer.Length)) > 0)
-            //    {
-            //        string message = Encoding.UTF8.GetString(buffer, 0, bytesRead);
-            //        if (InvokeRequired)
-            //        {
-            //            Invoke(new Action(() => DisplayMessage(message)));
-            //        }
-            //        else
-            //        {
-            //            DisplayMessage(message);
-            //        }
-            //    }
-            //}
-            //catch (Exception ex)
-            //{
-            //    MessageBox.Show($"Error receiving message: {ex.Message}");
-            //}
-
             try
             {
-                byte[] buffer = new byte[1024 * 1024 * 5]; // Tăng buffer lên 5MB
+                byte[] buffer = new byte[1024];
                 int bytesRead;
 
                 while ((bytesRead = await networkStream.ReadAsync(buffer, 0, buffer.Length)) > 0)
                 {
                     string message = Encoding.UTF8.GetString(buffer, 0, bytesRead);
-
-                    // Xử lý ảnh
-                    if (message.StartsWith("IMAGE:"))
+                    if (InvokeRequired)
                     {
-                        try
-                        {
-                            string base64Image = message.Substring(6);
-                            byte[] imageBytes = Convert.FromBase64String(base64Image);
-
-                            string tempImagePath = Path.Combine(Path.GetTempPath(), $"{Guid.NewGuid()}.jpg");
-                            File.WriteAllBytes(tempImagePath, imageBytes);
-
-                            if (InvokeRequired)
-                            {
-                                Invoke(new Action(() => DisplayImage(tempImagePath)));
-                            }
-                            else
-                            {
-                                DisplayImage(tempImagePath);
-                            }
-                        }
-                        catch (Exception imgEx)
-                        {
-                            MessageBox.Show($"Error processing image: {imgEx.Message}");
-                        }
+                        Invoke(new Action(() => DisplayMessage(message)));
                     }
-                    // Xử lý file
-                    else if (message.StartsWith("FILE:"))
-                    {
-                        try
-                        {
-                            string[] fileParts = message.Split(new[] { ':' }, 3);
-                            string fileName = fileParts[1];
-                            string base64File = fileParts[2];
-
-                            byte[] fileBytes = Convert.FromBase64String(base64File);
-
-                            // Lưu file vào thư mục tạm
-                            string saveDirectory = Path.Combine(Application.StartupPath, "ReceivedFiles");
-                            Directory.CreateDirectory(saveDirectory);
-                            string filePath = Path.Combine(saveDirectory, fileName);
-
-                            File.WriteAllBytes(filePath, fileBytes);
-
-                            // Hiển thị thông báo nhận file
-                            DisplayMessage($"Received file: {fileName}");
-                        }
-                        catch (Exception fileEx)
-                        {
-                            MessageBox.Show($"Error processing file: {fileEx.Message}");
-                        }
-                    }
-                    // Xử lý emoji
-                    else if (message.StartsWith("EMOJI:"))
-                    {
-                        string emoji = message.Substring(6);
-                        DisplayMessage($"Server: {emoji}");
-                    }
-                    // Xử lý tin nhắn thông thường
                     else
                     {
                         DisplayMessage(message);
@@ -145,6 +66,7 @@ namespace Client
             {
                 MessageBox.Show($"Error receiving message: {ex.Message}");
             }
+
         }
 
         private void DisplayImage(string tempImagePath)
@@ -165,7 +87,7 @@ namespace Client
 
                 PictureBox pictureBox = new PictureBox
                 {
-                    Image = resizedImage, 
+                    Image = resizedImage,
                     SizeMode = PictureBoxSizeMode.AutoSize,
                     Margin = new Padding(5)
                 };
@@ -266,40 +188,10 @@ namespace Client
 
         }
 
-        private void ClearAllMessages()
-        {
-            DialogResult result = MessageBox.Show("Bạn có chắc muốn xóa toàn bộ tin nhắn?",
-                                                  "Xác nhận xóa",
-                                                  MessageBoxButtons.YesNo,
-                                                  MessageBoxIcon.Warning);
-
-            if (result == DialogResult.Yes)
-            {
-                flowLayoutPanel1.Controls.Clear();
-            }
-        }
-
-        private void AddClearAllButton()
-        {
-            Button btnClearAll = new Button
-            {
-                Text = "Xóa tất cả",
-                Dock = DockStyle.Bottom,
-                Height = 30,
-                BackColor = Color.Red,
-                ForeColor = Color.White
-            };
-
-            btnClearAll.Click += (sender, e) => ClearAllMessages();
-
-            // Thêm nút vào form
-            this.Controls.Add(btnClearAll);
-        }
-
         private void SendMessage(string message)
         {
-            if(networkStream != null && !string.IsNullOrEmpty(message))
-        {
+            if (networkStream != null && !string.IsNullOrEmpty(message))
+            {
                 try
                 {
                     byte[] messageBytes = Encoding.UTF8.GetBytes(message);
@@ -384,7 +276,6 @@ namespace Client
 
                 SendMessage(message);
                 DisplayImage(imagePath);
-                DisplayMessage($"Me: Sent an image");
             }
             catch (Exception ex)
             {
@@ -434,6 +325,11 @@ namespace Client
         }
 
         private void flowLayoutPanel1_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
+
+        private void Client_Load(object sender, EventArgs e)
         {
 
         }

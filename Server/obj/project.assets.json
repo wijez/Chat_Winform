@@ -14,11 +14,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\app\\windowform\\Client\\Server\\Server.csproj",
+      "projectUniqueName": "D:\\Workspace\\Chat_Winform\\Server\\Server.csproj",
       "projectName": "Server",
-      "projectPath": "D:\\app\\windowform\\Client\\Server\\Server.csproj",
+      "projectPath": "D:\\Workspace\\Chat_Winform\\Server\\Server.csproj",
       "packagesPath": "C:\\Users\\vieti\\.nuget\\packages\\",
-      "outputPath": "D:\\app\\windowform\\Client\\Server\\obj\\",
+      "outputPath": "D:\\Workspace\\Chat_Winform\\Server\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
