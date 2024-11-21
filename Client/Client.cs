@@ -164,7 +164,6 @@ namespace Client
 
             btnDelete.Click += (sender, e) =>
             {
-                // Xác nhận trước khi xóa
                 DialogResult result = MessageBox.Show("Bạn có chắc muốn xóa tin nhắn này?",
                                                       "Xác nhận xóa",
                                                       MessageBoxButtons.YesNo,
@@ -172,13 +171,11 @@ namespace Client
 
                 if (result == DialogResult.Yes)
                 {
-                    // Xóa toàn bộ panel chứa tin nhắn
                     flowLayoutPanel1.Controls.Remove(messagePanel);
                     messagePanel.Dispose();
                 }
             };
 
-            // Thêm các điều khiển vào panel
             messagePanel.Controls.Add(btnDelete);
             messagePanel.Controls.Add(lblTimestamp);
             messagePanel.Controls.Add(lblMessage);
@@ -206,45 +203,7 @@ namespace Client
         }
 
 
-        private void richTextBox1_TextChanged(object sender, EventArgs e)
-        {
 
-        }
-
-        private void textBox1_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void button1_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label1_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void btnEmoji_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void pnlEmoji_Paint(object sender, PaintEventArgs e)
-        {
-
-        }
-
-        private void btnFile_Click(object sender, EventArgs e)
-        {
-
-        }
 
         private void btnImage_Click(object sender, EventArgs e)
         {
@@ -318,20 +277,40 @@ namespace Client
                 MessageBox.Show($"Error disconnecting from server: {ex.Message}");
             }
         }
-
-        private void rtbInput_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void flowLayoutPanel1_Paint(object sender, PaintEventArgs e)
-        {
-
-        }
-
         private void Client_Load(object sender, EventArgs e)
         {
 
         }
+
+        private async void SendPrivateMessage(TcpClient client, string message)
+        {
+            byte[] messageBytes = Encoding.UTF8.GetBytes(message);
+            try
+            {
+                NetworkStream stream = client.GetStream();
+                await stream.WriteAsync(messageBytes, 0, messageBytes.Length);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error sending private message: {ex.Message}");
+            }
+        }
+        private async Task BroadcastMessageToClient(string message, TcpClient client)
+        {
+            try
+            {
+                NetworkStream stream = client.GetStream();
+                byte[] messageBytes = Encoding.UTF8.GetBytes(message);
+                await stream.WriteAsync(messageBytes, 0, messageBytes.Length);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error sending message to client: {ex.Message}");
+            }
+        }
+
+
+       
+
     }
 }

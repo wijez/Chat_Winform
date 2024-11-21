@@ -18,9 +18,11 @@ namespace Server
     {
         private TcpListener tcpListener;
         private NetworkStream networkStream;
-        private List<TcpClient> connectedClients = new List<TcpClient>();
+        private List<TcpClient> connectedClients= new List<TcpClient>();
+        private List<ClientInfo> connectedInfoTCP = new List<ClientInfo>();
         private string tempImagePath;
         private bool isImageSent = false;
+
 
         public Server()
         {
@@ -49,9 +51,15 @@ namespace Server
                 try
                 {
                     TcpClient client = await tcpListener.AcceptTcpClientAsync();
+                    var clientInfomation = new ClientInfo
+                    {
+                        Client = client,
+                        ClientName = client.Client.RemoteEndPoint.ToString()
+                    };
                     lock (connectedClients)
                     {
                         connectedClients.Add(client);
+                        connectedInfoTCP.Add(clientInfomation);
                     }
 
                     string clientInfo = client.Client.RemoteEndPoint.ToString();
@@ -73,6 +81,40 @@ namespace Server
                 }
             }
         }
+
+        //private async Task AcceptClientsAsynciNFO()
+        //{
+        //    while (true)
+        //    {
+        //        try
+        //        {
+        //            TcpClient client = await tcpListener.AcceptTcpClientAsync();
+        //            var clientInfo = new ClientInfo
+        //            {
+        //                Client = client,
+        //                ClientName = client.Client.RemoteEndPoint.ToString()
+        //            };
+
+        //            lock (connectedClients)
+        //            {
+        //                connectedClients.Add(clientInfo);
+        //            }
+
+        //            // Cập nhật listBox1
+        //            listBox1.Invoke(new Action(() =>
+        //            {
+        //                _ = listBox1.Items.Add(clientInfo.ClientName);
+        //            }));
+
+        //            _ = Task.Run(() => HandleClient(client));
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            MessageBox.Show($"Error accepting client: {ex.Message}");
+        //        }
+        //    }
+        //}
+
 
         private void ConfigureFlowLayoutPanel()
         {
@@ -300,9 +342,15 @@ namespace Server
             }
         }
 
-        private async Task BroadcastMessage(string message, TcpClient excludeClient = null)
+        private async Task BroadcastMessage(string message, TcpClient? excludeClient = null)
         {
             byte[] messageBytes = Encoding.UTF8.GetBytes(message);
+
+            if (connectedClients == null || connectedClients.Count == 0)
+            {
+                Console.WriteLine("No clients are connected.");
+                return;
+            }
 
             lock (connectedClients)
             {
@@ -363,32 +411,6 @@ namespace Server
             }
         }
 
-
-        private void pnlMainServer_Paint(object sender, PaintEventArgs e)
-        {
-
-        }
-
-        private void pnlEmojiServer_Paint(object sender, PaintEventArgs e)
-        {
-
-        }
-
-        private void pnlListClient_Paint(object sender, PaintEventArgs e)
-        {
-
-        }
-
-        private void btnEmojiServer_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void btnFileServer_Click(object sender, EventArgs e)
-        {
-
-        }
-
         private void btnImageServer_Click(object sender, EventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog
@@ -421,11 +443,6 @@ namespace Server
             }
         }
 
-        private void richTextBox1_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
         private async void button1_Click(object sender, EventArgs e)
         {
             if (isImageSent)
@@ -441,16 +458,29 @@ namespace Server
                 await BroadcastMessage($"Server: {message}");
                 richTextBox1.Clear();
             }
-        }
-
-        private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
-        {
 
         }
 
-        private void richTextBox2_TextChanged(object sender, EventArgs e)
+        private async Task SendMessageToSelectedClientsAsync(string message)
         {
+            try
+            {
+                var selectedClients = listBox1.SelectedItems;
 
+                foreach (var selectedClientName in selectedClients)
+                {
+                    var clientInfomation = connectedInfoTCP.FirstOrDefault(c => c.ClientName == selectedClientName.ToString());
+
+                    if (clientInfomation != null)
+                    {
+                        await SendMessageToClient(clientInfomation.Client, message);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error sending message: {ex.Message}");
+            }
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -458,14 +488,48 @@ namespace Server
             StartServer();
         }
 
-        private void flowLayoutPanel1_Paint(object sender, PaintEventArgs e)
+        private async Task SendMessageToClient(TcpClient client, string message)
         {
+            try
+            {
+                if (client.Connected)
+                {
+                    NetworkStream stream = client.GetStream();
 
+                    byte[] data = Encoding.UTF8.GetBytes(message);
+                    await stream.WriteAsync(data, 0, data.Length);
+                }
+                else
+                {
+                    MessageBox.Show("Client is disconnected.");
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error sending message to client: {ex.Message}");
+            }
         }
 
-        private void label1_Click(object sender, EventArgs e)
+        private void RemoveDisconnectedClient(ClientInfo clientInfo)
         {
+            lock (connectedClients)
+            {
+                connectedClients.Remove(clientInfo);
+            }
 
+            listBox1.Invoke(new Action(() =>
+            {
+                listBox1.Items.Remove(clientInfo.ClientName);
+            }));
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            String message = richTextBox1.Text;
+            if (!string.IsNullOrWhiteSpace(message))
+            {
+                _ = SendMessageToSelectedClientsAsync(message);
+            }
         }
     }
 }

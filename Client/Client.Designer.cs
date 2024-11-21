@@ -61,7 +61,6 @@
             lblInfo.TabIndex = 3;
             lblInfo.Text = "Message";
             lblInfo.TextAlign = ContentAlignment.MiddleCenter;
-            lblInfo.Click += label1_Click;
             // 
             // pnlList
             // 
@@ -79,7 +78,6 @@
             listBox1.Name = "listBox1";
             listBox1.Size = new Size(150, 364);
             listBox1.TabIndex = 0;
-            listBox1.SelectedIndexChanged += listBox1_SelectedIndexChanged;
             // 
             // pnlMain
             // 
@@ -98,7 +96,6 @@
             pnlEmoji.Name = "pnlEmoji";
             pnlEmoji.Size = new Size(251, 148);
             pnlEmoji.TabIndex = 6;
-            pnlEmoji.Paint += pnlEmoji_Paint;
             // 
             // pnlInput
             // 
@@ -130,7 +127,6 @@
             rtbInput.Size = new Size(362, 38);
             rtbInput.TabIndex = 3;
             rtbInput.Text = "";
-            rtbInput.TextChanged += rtbInput_TextChanged;
             // 
             // btnEmoji
             // 
@@ -140,7 +136,6 @@
             btnEmoji.Size = new Size(30, 23);
             btnEmoji.TabIndex = 2;
             btnEmoji.UseVisualStyleBackColor = true;
-            btnEmoji.Click += btnEmoji_Click;
             // 
             // btnFile
             // 
@@ -150,7 +145,6 @@
             btnFile.Size = new Size(30, 23);
             btnFile.TabIndex = 1;
             btnFile.UseVisualStyleBackColor = true;
-            btnFile.Click += btnFile_Click;
             // 
             // btnImage
             // 
@@ -170,7 +164,6 @@
             flowLayoutPanel1.Name = "flowLayoutPanel1";
             flowLayoutPanel1.Size = new Size(638, 298);
             flowLayoutPanel1.TabIndex = 8;
-            flowLayoutPanel1.Paint += flowLayoutPanel1_Paint;
             // 
             // radioButton1
             // 

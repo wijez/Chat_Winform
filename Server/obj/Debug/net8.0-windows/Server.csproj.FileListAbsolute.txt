@@ -15,11 +15,6 @@ D:\app\windowform\Client\Server\obj\Debug\net8.0-windows\refint\Server.dll
 D:\app\windowform\Client\Server\obj\Debug\net8.0-windows\Server.pdb
 D:\app\windowform\Client\Server\obj\Debug\net8.0-windows\Server.genruntimeconfig.cache
 D:\app\windowform\Client\Server\obj\Debug\net8.0-windows\ref\Server.dll
-D:\Workspace\Chat_Winform\Server\bin\Debug\net8.0-windows\Server.exe
-D:\Workspace\Chat_Winform\Server\bin\Debug\net8.0-windows\Server.deps.json
-D:\Workspace\Chat_Winform\Server\bin\Debug\net8.0-windows\Server.runtimeconfig.json
-D:\Workspace\Chat_Winform\Server\bin\Debug\net8.0-windows\Server.dll
-D:\Workspace\Chat_Winform\Server\bin\Debug\net8.0-windows\Server.pdb
 D:\Workspace\Chat_Winform\Server\obj\Debug\net8.0-windows\Server.Properties.Resources.resources
 D:\Workspace\Chat_Winform\Server\obj\Debug\net8.0-windows\Server.Server.resources
 D:\Workspace\Chat_Winform\Server\obj\Debug\net8.0-windows\Server.csproj.GenerateResource.cache
@@ -28,6 +23,11 @@ D:\Workspace\Chat_Winform\Server\obj\Debug\net8.0-windows\Server.AssemblyInfoInp
 D:\Workspace\Chat_Winform\Server\obj\Debug\net8.0-windows\Server.AssemblyInfo.cs
 D:\Workspace\Chat_Winform\Server\obj\Debug\net8.0-windows\Server.csproj.CoreCompileInputs.cache
 D:\Workspace\Chat_Winform\Server\obj\Debug\net8.0-windows\Server.sourcelink.json
+D:\Workspace\Chat_Winform\Server\bin\Debug\net8.0-windows\Server.exe
+D:\Workspace\Chat_Winform\Server\bin\Debug\net8.0-windows\Server.deps.json
+D:\Workspace\Chat_Winform\Server\bin\Debug\net8.0-windows\Server.runtimeconfig.json
+D:\Workspace\Chat_Winform\Server\bin\Debug\net8.0-windows\Server.dll
+D:\Workspace\Chat_Winform\Server\bin\Debug\net8.0-windows\Server.pdb
 D:\Workspace\Chat_Winform\Server\obj\Debug\net8.0-windows\Server.dll
 D:\Workspace\Chat_Winform\Server\obj\Debug\net8.0-windows\refint\Server.dll
 D:\Workspace\Chat_Winform\Server\obj\Debug\net8.0-windows\Server.pdb

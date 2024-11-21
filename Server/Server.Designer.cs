@@ -42,6 +42,7 @@
             btnFileServer = new Button();
             btnImageServer = new Button();
             flowLayoutPanel1 = new FlowLayoutPanel();
+            button3 = new Button();
             pnlListClient.SuspendLayout();
             pnlMainServer.SuspendLayout();
             pnlInputServer.SuspendLayout();
@@ -61,7 +62,6 @@
             label1.TabIndex = 3;
             label1.Text = "Server";
             label1.TextAlign = ContentAlignment.MiddleCenter;
-            label1.Click += label1_Click;
             // 
             // pnlListClient
             // 
@@ -73,7 +73,6 @@
             pnlListClient.Name = "pnlListClient";
             pnlListClient.Size = new Size(153, 376);
             pnlListClient.TabIndex = 4;
-            pnlListClient.Paint += pnlListClient_Paint;
             // 
             // listBox1
             // 
@@ -81,14 +80,15 @@
             listBox1.ItemHeight = 15;
             listBox1.Location = new Point(3, 3);
             listBox1.Name = "listBox1";
+            listBox1.SelectionMode = SelectionMode.MultiExtended;
             listBox1.Size = new Size(145, 379);
             listBox1.TabIndex = 0;
-            listBox1.SelectedIndexChanged += listBox1_SelectedIndexChanged;
             // 
             // pnlMainServer
             // 
             pnlMainServer.AutoScroll = true;
             pnlMainServer.BackColor = SystemColors.Window;
+            pnlMainServer.Controls.Add(button3);
             pnlMainServer.Controls.Add(button2);
             pnlMainServer.Controls.Add(pnlEmojiServer);
             pnlMainServer.Controls.Add(pnlInputServer);
@@ -97,7 +97,6 @@
             pnlMainServer.Name = "pnlMainServer";
             pnlMainServer.Size = new Size(646, 450);
             pnlMainServer.TabIndex = 5;
-            pnlMainServer.Paint += pnlMainServer_Paint;
             // 
             // button2
             // 
@@ -118,7 +117,6 @@
             pnlEmojiServer.Name = "pnlEmojiServer";
             pnlEmojiServer.Size = new Size(240, 169);
             pnlEmojiServer.TabIndex = 6;
-            pnlEmojiServer.Paint += pnlEmojiServer_Paint;
             // 
             // pnlInputServer
             // 
@@ -141,7 +139,6 @@
             richTextBox1.Size = new Size(445, 44);
             richTextBox1.TabIndex = 4;
             richTextBox1.Text = "";
-            richTextBox1.TextChanged += richTextBox1_TextChanged;
             // 
             // button1
             // 
@@ -161,7 +158,6 @@
             btnEmojiServer.Size = new Size(32, 23);
             btnEmojiServer.TabIndex = 2;
             btnEmojiServer.UseVisualStyleBackColor = true;
-            btnEmojiServer.Click += btnEmojiServer_Click;
             // 
             // btnFileServer
             // 
@@ -171,7 +167,6 @@
             btnFileServer.Size = new Size(32, 23);
             btnFileServer.TabIndex = 1;
             btnFileServer.UseVisualStyleBackColor = true;
-            btnFileServer.Click += btnFileServer_Click;
             // 
             // btnImageServer
             // 
@@ -192,7 +187,17 @@
             flowLayoutPanel1.Name = "flowLayoutPanel1";
             flowLayoutPanel1.Size = new Size(646, 293);
             flowLayoutPanel1.TabIndex = 7;
-            flowLayoutPanel1.Paint += flowLayoutPanel1_Paint;
+            // 
+            // button3
+            // 
+            button3.BackColor = SystemColors.InactiveCaption;
+            button3.Location = new Point(465, 14);
+            button3.Name = "button3";
+            button3.Size = new Size(98, 23);
+            button3.TabIndex = 7;
+            button3.Text = "send to one";
+            button3.UseVisualStyleBackColor = false;
+            button3.Click += button3_Click;
             // 
             // Server
             // 
@@ -227,5 +232,6 @@
         private ListBox listBox1;
         private Button button2;
         private FlowLayoutPanel flowLayoutPanel1;
+        private Button button3;
     }
 }
