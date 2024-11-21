@@ -1,0 +1,17 @@
+D:\app\windowform\Client\Server\bin\Debug\net8.0-windows\Server.exe
+D:\app\windowform\Client\Server\bin\Debug\net8.0-windows\Server.deps.json
+D:\app\windowform\Client\Server\bin\Debug\net8.0-windows\Server.runtimeconfig.json
+D:\app\windowform\Client\Server\bin\Debug\net8.0-windows\Server.dll
+D:\app\windowform\Client\Server\bin\Debug\net8.0-windows\Server.pdb
+D:\app\windowform\Client\Server\obj\Debug\net8.0-windows\Server.Properties.Resources.resources
+D:\app\windowform\Client\Server\obj\Debug\net8.0-windows\Server.Server.resources
+D:\app\windowform\Client\Server\obj\Debug\net8.0-windows\Server.csproj.GenerateResource.cache
+D:\app\windowform\Client\Server\obj\Debug\net8.0-windows\Server.GeneratedMSBuildEditorConfig.editorconfig
+D:\app\windowform\Client\Server\obj\Debug\net8.0-windows\Server.AssemblyInfoInputs.cache
+D:\app\windowform\Client\Server\obj\Debug\net8.0-windows\Server.AssemblyInfo.cs
+D:\app\windowform\Client\Server\obj\Debug\net8.0-windows\Server.csproj.CoreCompileInputs.cache
+D:\app\windowform\Client\Server\obj\Debug\net8.0-windows\Server.dll
+D:\app\windowform\Client\Server\obj\Debug\net8.0-windows\refint\Server.dll
+D:\app\windowform\Client\Server\obj\Debug\net8.0-windows\Server.pdb
+D:\app\windowform\Client\Server\obj\Debug\net8.0-windows\Server.genruntimeconfig.cache
+D:\app\windowform\Client\Server\obj\Debug\net8.0-windows\ref\Server.dll
