@@ -32,7 +32,7 @@
             label1 = new Label();
             pnlListClient = new Panel();
             listBox1 = new ListBox();
-            pnlMainServer = new Panel();
+            flowLayoutPanel1 = new Panel();
             button2 = new Button();
             pnlEmojiServer = new Panel();
             pnlInputServer = new Panel();
@@ -41,9 +41,8 @@
             btnEmojiServer = new Button();
             btnFileServer = new Button();
             btnImageServer = new Button();
-            flowLayoutPanel1 = new FlowLayoutPanel();
             pnlListClient.SuspendLayout();
-            pnlMainServer.SuspendLayout();
+            flowLayoutPanel1.SuspendLayout();
             pnlInputServer.SuspendLayout();
             SuspendLayout();
             // 
@@ -72,7 +71,6 @@
             pnlListClient.Name = "pnlListClient";
             pnlListClient.Size = new Size(153, 376);
             pnlListClient.TabIndex = 4;
-            pnlListClient.Paint += pnlListClient_Paint;
             // 
             // listBox1
             // 
@@ -82,24 +80,23 @@
             listBox1.Name = "listBox1";
             listBox1.Size = new Size(145, 379);
             listBox1.TabIndex = 0;
-            listBox1.SelectedIndexChanged += listBox1_SelectedIndexChanged;
             // 
-            // pnlMainServer
+            // flowLayoutPanel1
             // 
-            pnlMainServer.AutoScroll = true;
-            pnlMainServer.BackColor = SystemColors.Window;
-            pnlMainServer.Controls.Add(button2);
-            pnlMainServer.Controls.Add(pnlEmojiServer);
-            pnlMainServer.Controls.Add(pnlInputServer);
-            pnlMainServer.Dock = DockStyle.Right;
-            pnlMainServer.Location = new Point(154, 0);
-            pnlMainServer.Name = "pnlMainServer";
-            pnlMainServer.Size = new Size(646, 450);
-            pnlMainServer.TabIndex = 5;
-            pnlMainServer.Paint += pnlMainServer_Paint;
+            flowLayoutPanel1.AutoScroll = true;
+            flowLayoutPanel1.BackColor = SystemColors.Window;
+            flowLayoutPanel1.Controls.Add(button2);
+            flowLayoutPanel1.Controls.Add(pnlEmojiServer);
+            flowLayoutPanel1.Controls.Add(pnlInputServer);
+            flowLayoutPanel1.Dock = DockStyle.Right;
+            flowLayoutPanel1.Location = new Point(154, 0);
+            flowLayoutPanel1.Name = "flowLayoutPanel1";
+            flowLayoutPanel1.Size = new Size(646, 450);
+            flowLayoutPanel1.TabIndex = 5;
             // 
             // button2
             // 
+            button2.AllowDrop = true;
             button2.BackColor = SystemColors.ScrollBar;
             button2.Location = new Point(590, 14);
             button2.Name = "button2";
@@ -117,7 +114,6 @@
             pnlEmojiServer.Name = "pnlEmojiServer";
             pnlEmojiServer.Size = new Size(240, 169);
             pnlEmojiServer.TabIndex = 6;
-            pnlEmojiServer.Paint += pnlEmojiServer_Paint;
             // 
             // pnlInputServer
             // 
@@ -160,7 +156,6 @@
             btnEmojiServer.Size = new Size(32, 23);
             btnEmojiServer.TabIndex = 2;
             btnEmojiServer.UseVisualStyleBackColor = true;
-            btnEmojiServer.Click += btnEmojiServer_Click;
             // 
             // btnFileServer
             // 
@@ -170,7 +165,6 @@
             btnFileServer.Size = new Size(32, 23);
             btnFileServer.TabIndex = 1;
             btnFileServer.UseVisualStyleBackColor = true;
-            btnFileServer.Click += btnFileServer_Click;
             // 
             // btnImageServer
             // 
@@ -182,17 +176,6 @@
             btnImageServer.UseVisualStyleBackColor = true;
             btnImageServer.Click += btnImageServer_Click;
             // 
-            // flowLayoutPanel1
-            // 
-            flowLayoutPanel1.AutoScroll = true;
-            flowLayoutPanel1.BackColor = SystemColors.Window;
-            flowLayoutPanel1.FlowDirection = FlowDirection.TopDown;
-            flowLayoutPanel1.Location = new Point(154, 74);
-            flowLayoutPanel1.Name = "flowLayoutPanel1";
-            flowLayoutPanel1.Size = new Size(646, 293);
-            flowLayoutPanel1.TabIndex = 7;
-            flowLayoutPanel1.Paint += flowLayoutPanel1_Paint;
-            // 
             // Server
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -201,12 +184,11 @@
             Controls.Add(pnlListClient);
             Controls.Add(label1);
             Controls.Add(flowLayoutPanel1);
-            Controls.Add(pnlMainServer);
             MaximumSize = new Size(816, 489);
             Name = "Server";
             Text = "Server";
             pnlListClient.ResumeLayout(false);
-            pnlMainServer.ResumeLayout(false);
+            flowLayoutPanel1.ResumeLayout(false);
             pnlInputServer.ResumeLayout(false);
             ResumeLayout(false);
         }
@@ -215,7 +197,7 @@
 
         private Label label1;
         private Panel pnlListClient;
-        private Panel pnlMainServer;
+        private Panel flowLayoutPanel1;
         private Panel pnlEmojiServer;
         private Panel pnlInputServer;
         private RichTextBox richTextBox1;
@@ -225,6 +207,5 @@
         private Button btnImageServer;
         private ListBox listBox1;
         private Button button2;
-        private FlowLayoutPanel flowLayoutPanel1;
     }
 }

@@ -76,11 +76,8 @@ namespace Server
 
         private void ConfigureFlowLayoutPanel()
         {
-            flowLayoutPanel1.FlowDirection = FlowDirection.TopDown;
 
             flowLayoutPanel1.AutoScroll = true;
-
-            flowLayoutPanel1.WrapContents = true;
 
             flowLayoutPanel1.Dock = DockStyle.Fill;
         }
@@ -133,7 +130,7 @@ namespace Server
             {
                 lblMessage.BackColor = Color.LightGreen;
             }
-            else if(message.StartsWith("Client:"))
+            else if (message.StartsWith("Client:"))
             {
                 lblMessage.BackColor = Color.AliceBlue;
             }
@@ -169,11 +166,17 @@ namespace Server
         {
             try
             {
+                if (string.IsNullOrEmpty(imagePath))
+                {
+                    MessageBox.Show("Image path cannot be null or empty.");
+                    return;
+                }
+
                 isImageSent = true;
                 int maxWidth = 300;
                 int maxHeight = 300;
 
-                Image originalImage = Image.FromFile(tempImagePath);
+                Image originalImage = Image.FromFile(imagePath);
 
                 double scaleFactor = Math.Min((double)maxWidth / originalImage.Width, (double)maxHeight / originalImage.Height);
 
@@ -191,16 +194,6 @@ namespace Server
 
                 string timestamp = DateTime.Now.ToString("HH:mm:ss");
 
-                Button btnDelete = new Button
-                {
-                    Text = "X",
-                    Dock = DockStyle.Right,
-                    Width = 30,
-                    FlatStyle = FlatStyle.Flat,
-                    BackColor = Color.Red,
-                    ForeColor = Color.White
-                };
-
                 Label lblTimestamp = new Label
                 {
                     Text = timestamp,
@@ -210,7 +203,6 @@ namespace Server
                     ForeColor = Color.Gray
                 };
 
-              
                 flowLayoutPanel1.Controls.Add(pictureBox);
                 flowLayoutPanel1.ScrollControlIntoView(pictureBox);
             }
@@ -246,31 +238,6 @@ namespace Server
 
         private async Task HandleClient(TcpClient client)
         {
-            //try
-            //{
-            //    NetworkStream stream = client.GetStream();
-            //    byte[] buffer = new byte[1024];
-            //    int bytesRead;
-
-            //    while ((bytesRead = await stream.ReadAsync(buffer, 0, buffer.Length)) > 0)
-            //    {
-            //        string message = Encoding.UTF8.GetString(buffer, 0, bytesRead);
-            //        if (flowLayoutPanel1.InvokeRequired)
-            //        {
-            //            flowLayoutPanel1.Invoke(new Action(() => DisplayMessage($"Client: {message}")));
-            //        }
-            //        else
-            //        {
-            //            DisplayMessage($"Client: {message}");
-            //        }
-
-            //        await BroadcastMessage($"Server broadcast: {message}", client);
-            //    }
-            //}
-            //catch (Exception ex)
-            //{
-            //    MessageBox.Show($"Error accepting client: {ex.Message}");
-            //}
             try
             {
                 NetworkStream stream = client.GetStream();
@@ -293,11 +260,10 @@ namespace Server
                     //{
                     //    await HandleEmojiMessage(message, client);
                     //}
-                    //else
-                    //{
-                    //    // Handle normal message
-                    //    await HandleNormalMessage(message, client);
-                    //}
+                    else
+                    {
+                        await HandleNormalMessage(message, client);
+                    }
                 }
             }
             catch (Exception ex)
@@ -305,6 +271,35 @@ namespace Server
                 MessageBox.Show($"Error handling client {client.Client.RemoteEndPoint}: {ex.Message}");
                 connectedClients.Remove(client); // Ensure the client is removed from the list on error
                 client.Close();
+            }
+        }
+
+        private async Task HandleNormalMessage(string message, TcpClient client)
+        {
+            try
+            {
+                NetworkStream stream = client.GetStream();
+                byte[] buffer = new byte[1024];
+                int bytesRead;
+
+                while ((bytesRead = await stream.ReadAsync(buffer, 0, buffer.Length)) > 0)
+                {
+                    String Receivemessage = Encoding.UTF8.GetString(buffer, 0, bytesRead);
+                    if (flowLayoutPanel1.InvokeRequired)
+                    {
+                        flowLayoutPanel1.Invoke(new Action(() => DisplayMessage($"Client: {Receivemessage}")));
+                    }
+                    else
+                    {
+                        DisplayMessage($"Client: {Receivemessage}");
+                    }
+
+                    await BroadcastMessage($"Server broadcast: {Receivemessage}", client);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error accepting client: {ex.Message}");
             }
         }
 
@@ -371,7 +366,7 @@ namespace Server
         {
             while (true)
             {
-                await ReceiveMessage();  
+                await ReceiveMessage();
             }
         }
 
@@ -397,43 +392,23 @@ namespace Server
             }
         }
 
-
-        private void pnlMainServer_Paint(object sender, PaintEventArgs e)
-        {
-
-        }
-
-        private void pnlEmojiServer_Paint(object sender, PaintEventArgs e)
-        {
-
-        }
-
-        private void pnlListClient_Paint(object sender, PaintEventArgs e)
-        {
-
-        }
-
-        private void btnEmojiServer_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void btnFileServer_Click(object sender, EventArgs e)
-        {
-
-        }
-
         private void btnImageServer_Click(object sender, EventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog
             {
                 Filter = "Image Files|*.jpg;*.jpeg;*.png;*.gif;*.bmp"
             };
-
             if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
                 string imagePath = openFileDialog.FileName;
-                SendImage(imagePath);
+                try
+                {
+                    SendImage(imagePath);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Error sending image: {ex.Message}");
+                }
             }
         }
 
@@ -463,11 +438,6 @@ namespace Server
 
         private async void button1_Click(object sender, EventArgs e)
         {
-            if (isImageSent)
-            {
-                return;
-            }
-
             string message = richTextBox1.Text;
 
             if (!string.IsNullOrEmpty(message))
@@ -476,16 +446,6 @@ namespace Server
                 await BroadcastMessage($"Server: {message}");
                 richTextBox1.Clear();
             }
-        }
-
-        private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void richTextBox2_TextChanged(object sender, EventArgs e)
-        {
-
         }
 
         private void button2_Click(object sender, EventArgs e)

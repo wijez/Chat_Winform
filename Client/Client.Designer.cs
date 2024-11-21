@@ -32,7 +32,7 @@
             lblInfo = new Label();
             pnlList = new Panel();
             listBox1 = new ListBox();
-            pnlMain = new Panel();
+            flowLayoutPanel1 = new Panel();
             pnlEmoji = new Panel();
             pnlInput = new Panel();
             button1 = new Button();
@@ -40,10 +40,9 @@
             btnEmoji = new Button();
             btnFile = new Button();
             btnImage = new Button();
-            flowLayoutPanel1 = new FlowLayoutPanel();
             radioButton1 = new RadioButton();
             pnlList.SuspendLayout();
-            pnlMain.SuspendLayout();
+            flowLayoutPanel1.SuspendLayout();
             pnlInput.SuspendLayout();
             SuspendLayout();
             // 
@@ -61,7 +60,6 @@
             lblInfo.TabIndex = 3;
             lblInfo.Text = "Message";
             lblInfo.TextAlign = ContentAlignment.MiddleCenter;
-            lblInfo.Click += label1_Click;
             // 
             // pnlList
             // 
@@ -79,17 +77,17 @@
             listBox1.Name = "listBox1";
             listBox1.Size = new Size(150, 364);
             listBox1.TabIndex = 0;
-            listBox1.SelectedIndexChanged += listBox1_SelectedIndexChanged;
             // 
-            // pnlMain
+            // flowLayoutPanel1
             // 
-            pnlMain.Controls.Add(pnlEmoji);
-            pnlMain.Controls.Add(pnlInput);
-            pnlMain.Controls.Add(flowLayoutPanel1);
-            pnlMain.Location = new Point(159, 71);
-            pnlMain.Name = "pnlMain";
-            pnlMain.Size = new Size(641, 381);
-            pnlMain.TabIndex = 5;
+            flowLayoutPanel1.AllowDrop = true;
+            flowLayoutPanel1.AutoScroll = true;
+            flowLayoutPanel1.Controls.Add(pnlEmoji);
+            flowLayoutPanel1.Controls.Add(pnlInput);
+            flowLayoutPanel1.Location = new Point(159, 71);
+            flowLayoutPanel1.Name = "flowLayoutPanel1";
+            flowLayoutPanel1.Size = new Size(641, 381);
+            flowLayoutPanel1.TabIndex = 5;
             // 
             // pnlEmoji
             // 
@@ -98,7 +96,6 @@
             pnlEmoji.Name = "pnlEmoji";
             pnlEmoji.Size = new Size(251, 148);
             pnlEmoji.TabIndex = 6;
-            pnlEmoji.Paint += pnlEmoji_Paint;
             // 
             // pnlInput
             // 
@@ -130,7 +127,6 @@
             rtbInput.Size = new Size(362, 38);
             rtbInput.TabIndex = 3;
             rtbInput.Text = "";
-            rtbInput.TextChanged += rtbInput_TextChanged;
             // 
             // btnEmoji
             // 
@@ -140,7 +136,6 @@
             btnEmoji.Size = new Size(30, 23);
             btnEmoji.TabIndex = 2;
             btnEmoji.UseVisualStyleBackColor = true;
-            btnEmoji.Click += btnEmoji_Click;
             // 
             // btnFile
             // 
@@ -150,7 +145,6 @@
             btnFile.Size = new Size(30, 23);
             btnFile.TabIndex = 1;
             btnFile.UseVisualStyleBackColor = true;
-            btnFile.Click += btnFile_Click;
             // 
             // btnImage
             // 
@@ -161,16 +155,6 @@
             btnImage.TabIndex = 0;
             btnImage.UseVisualStyleBackColor = true;
             btnImage.Click += btnImage_Click;
-            // 
-            // flowLayoutPanel1
-            // 
-            flowLayoutPanel1.AutoScroll = true;
-            flowLayoutPanel1.FlowDirection = FlowDirection.TopDown;
-            flowLayoutPanel1.Location = new Point(0, 0);
-            flowLayoutPanel1.Name = "flowLayoutPanel1";
-            flowLayoutPanel1.Size = new Size(638, 298);
-            flowLayoutPanel1.TabIndex = 8;
-            flowLayoutPanel1.Paint += flowLayoutPanel1_Paint;
             // 
             // radioButton1
             // 
@@ -191,14 +175,14 @@
             BackColor = SystemColors.ButtonHighlight;
             ClientSize = new Size(800, 450);
             Controls.Add(radioButton1);
-            Controls.Add(pnlMain);
+            Controls.Add(flowLayoutPanel1);
             Controls.Add(pnlList);
             Controls.Add(lblInfo);
             MaximumSize = new Size(816, 489);
             Name = "Client";
             Text = "Client";
             pnlList.ResumeLayout(false);
-            pnlMain.ResumeLayout(false);
+            flowLayoutPanel1.ResumeLayout(false);
             pnlInput.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
@@ -207,7 +191,7 @@
         #endregion
         private Label lblInfo;
         private Panel pnlList;
-        private Panel pnlMain;
+        private Panel flowLayoutPanel1;
         private Panel pnlEmoji;
         private Panel pnlInput;
         private Button btnEmoji;
@@ -217,6 +201,5 @@
         private RichTextBox rtbInput;
         private ListBox listBox1;
         private RadioButton radioButton1;
-        private FlowLayoutPanel flowLayoutPanel1;
     }
 }

@@ -18,13 +18,11 @@ namespace Client
         private Dictionary<Guid, Panel> messagePanels = new Dictionary<Guid, Panel>();
         private TcpClient tcpClient;
         private NetworkStream networkStream;
-        private string imagePath;
 
         public Client()
         {
             InitializeComponent();
             ConfigureFlowLayoutPanel();
-            AddClearAllButton();
         }
 
         private void ConnectToServer()
@@ -34,7 +32,8 @@ namespace Client
                 tcpClient = new TcpClient("127.0.0.1", 12345);
                 networkStream = tcpClient.GetStream();
                 Task.Run(() => ReceiveMessage());
-                MessageBox.Show("Connected to server.");
+                MessageBox.Show($"TcpClient Connected: {tcpClient.Connected}");
+
             }
             catch (Exception ex)
             {
@@ -45,29 +44,6 @@ namespace Client
 
         private async Task ReceiveMessage()
         {
-            //try
-            //{
-            //    byte[] buffer = new byte[1024];
-            //    int bytesRead;
-
-            //    while ((bytesRead = await networkStream.ReadAsync(buffer, 0, buffer.Length)) > 0)
-            //    {
-            //        string message = Encoding.UTF8.GetString(buffer, 0, bytesRead);
-            //        if (InvokeRequired)
-            //        {
-            //            Invoke(new Action(() => DisplayMessage(message)));
-            //        }
-            //        else
-            //        {
-            //            DisplayMessage(message);
-            //        }
-            //    }
-            //}
-            //catch (Exception ex)
-            //{
-            //    MessageBox.Show($"Error receiving message: {ex.Message}");
-            //}
-
             try
             {
                 byte[] buffer = new byte[1024 * 1024 * 5]; // Tăng buffer lên 5MB
@@ -75,6 +51,12 @@ namespace Client
 
                 while ((bytesRead = await networkStream.ReadAsync(buffer, 0, buffer.Length)) > 0)
                 {
+                    if (bytesRead == 0)
+                    {
+                        DisplayMessage("Connection closed by server.");
+                        break;
+                    }
+
                     string message = Encoding.UTF8.GetString(buffer, 0, bytesRead);
 
                     // Xử lý ảnh
@@ -83,6 +65,12 @@ namespace Client
                         try
                         {
                             string base64Image = message.Substring(6);
+
+                            if (string.IsNullOrWhiteSpace(base64Image) || !IsBase64String(base64Image))
+                            {
+                                throw new InvalidOperationException("Invalid Base64 data.");
+                            }
+
                             byte[] imageBytes = Convert.FromBase64String(base64Image);
 
                             string tempImagePath = Path.Combine(Path.GetTempPath(), $"{Guid.NewGuid()}.jpg");
@@ -99,73 +87,91 @@ namespace Client
                         }
                         catch (Exception imgEx)
                         {
-                            MessageBox.Show($"Error processing image: {imgEx.Message}");
+                            Console.WriteLine($"Error processing image: {imgEx.Message}");
                         }
                     }
-                    // Xử lý file
                     else if (message.StartsWith("FILE:"))
                     {
                         try
                         {
                             string[] fileParts = message.Split(new[] { ':' }, 3);
+                            if (fileParts.Length < 3)
+                            {
+                                throw new FormatException("Invalid file format.");
+                            }
+
                             string fileName = fileParts[1];
                             string base64File = fileParts[2];
 
+                            if (string.IsNullOrWhiteSpace(base64File) || !IsBase64String(base64File))
+                            {
+                                throw new InvalidOperationException("Invalid Base64 data.");
+                            }
+
                             byte[] fileBytes = Convert.FromBase64String(base64File);
 
-                            // Lưu file vào thư mục tạm
                             string saveDirectory = Path.Combine(Application.StartupPath, "ReceivedFiles");
                             Directory.CreateDirectory(saveDirectory);
                             string filePath = Path.Combine(saveDirectory, fileName);
 
                             File.WriteAllBytes(filePath, fileBytes);
 
-                            // Hiển thị thông báo nhận file
                             DisplayMessage($"Received file: {fileName}");
                         }
                         catch (Exception fileEx)
                         {
-                            MessageBox.Show($"Error processing file: {fileEx.Message}");
+                            Console.WriteLine($"Error processing file: {fileEx.Message}");
                         }
                     }
-                    // Xử lý emoji
                     else if (message.StartsWith("EMOJI:"))
                     {
                         string emoji = message.Substring(6);
                         DisplayMessage($"Server: {emoji}");
                     }
-                    // Xử lý tin nhắn thông thường
                     else
                     {
-                        DisplayMessage(message);
+                        if (InvokeRequired)
+                        {
+                            Invoke(new Action(() => DisplayMessage(message)));
+                        }
+                        else
+                        {
+                            DisplayMessage(message);
+                        }
                     }
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error receiving message: {ex.Message}");
+                Console.WriteLine($"Error receiving message: {ex.Message}");
             }
         }
+
+        private bool IsBase64String(string base64)
+        {
+            Span<byte> buffer = new Span<byte>(new byte[base64.Length]);
+            return Convert.TryFromBase64String(base64, buffer, out _);
+        }
+
 
         private void DisplayImage(string tempImagePath)
         {
             try
             {
+                using Image originalImage = Image.FromFile(tempImagePath);
+
                 int maxWidth = 300;
                 int maxHeight = 300;
-
-                Image originalImage = Image.FromFile(tempImagePath);
-
                 double scaleFactor = Math.Min((double)maxWidth / originalImage.Width, (double)maxHeight / originalImage.Height);
 
                 int newWidth = (int)(originalImage.Width * scaleFactor);
                 int newHeight = (int)(originalImage.Height * scaleFactor);
 
-                Image resizedImage = new Bitmap(originalImage, newWidth, newHeight);
+                using Image resizedImage = new Bitmap(originalImage, newWidth, newHeight);
 
                 PictureBox pictureBox = new PictureBox
                 {
-                    Image = resizedImage, 
+                    Image = (Image)resizedImage.Clone(), // Clone to retain ownership after disposal
                     SizeMode = PictureBoxSizeMode.AutoSize,
                     Margin = new Padding(5)
                 };
@@ -181,11 +187,8 @@ namespace Client
 
         private void ConfigureFlowLayoutPanel()
         {
-            flowLayoutPanel1.FlowDirection = FlowDirection.TopDown;
 
             flowLayoutPanel1.AutoScroll = true;
-
-            flowLayoutPanel1.WrapContents = true;
 
             flowLayoutPanel1.Dock = DockStyle.Fill;
         }
@@ -264,94 +267,39 @@ namespace Client
             flowLayoutPanel1.Controls.Add(messagePanel);
             flowLayoutPanel1.ScrollControlIntoView(messagePanel);
 
+
         }
 
-        private void ClearAllMessages()
-        {
-            DialogResult result = MessageBox.Show("Bạn có chắc muốn xóa toàn bộ tin nhắn?",
-                                                  "Xác nhận xóa",
-                                                  MessageBoxButtons.YesNo,
-                                                  MessageBoxIcon.Warning);
-
-            if (result == DialogResult.Yes)
-            {
-                flowLayoutPanel1.Controls.Clear();
-            }
-        }
-
-        private void AddClearAllButton()
-        {
-            Button btnClearAll = new Button
-            {
-                Text = "Xóa tất cả",
-                Dock = DockStyle.Bottom,
-                Height = 30,
-                BackColor = Color.Red,
-                ForeColor = Color.White
-            };
-
-            btnClearAll.Click += (sender, e) => ClearAllMessages();
-
-            // Thêm nút vào form
-            this.Controls.Add(btnClearAll);
-        }
 
         private void SendMessage(string message)
         {
-            if(networkStream != null && !string.IsNullOrEmpty(message))
-        {
-                try
+            try
+            {
+                if (networkStream == null || !tcpClient.Connected)
                 {
-                    byte[] messageBytes = Encoding.UTF8.GetBytes(message);
-                    networkStream.Write(messageBytes, 0, messageBytes.Length);
-                    DisplayMessage($"Me: {message}");
+                    MessageBox.Show("Not connected to the server.");
+                    return;
                 }
-                catch (Exception ex)
+
+                if (string.IsNullOrEmpty(message))
                 {
-                    MessageBox.Show($"Error sending message: {ex.Message}");
+                    MessageBox.Show("Message is empty.");
+                    return;
                 }
+
+                byte[] messageBytes = Encoding.UTF8.GetBytes(message);
+                networkStream.Write(messageBytes, 0, messageBytes.Length);
+
+                DisplayMessage($"Me: {message}");
             }
-        }
-
-
-        private void richTextBox1_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void textBox1_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void button1_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label1_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void btnEmoji_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void pnlEmoji_Paint(object sender, PaintEventArgs e)
-        {
-
-        }
-
-        private void btnFile_Click(object sender, EventArgs e)
-        {
-
+            catch (IOException ioEx)
+            {
+                MessageBox.Show($"IO Error: {ioEx.Message}");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Unexpected error: {ex.Message}");
+            }
         }
 
         private void btnImage_Click(object sender, EventArgs e)
@@ -374,6 +322,23 @@ namespace Client
             }
         }
 
+        private void SendTextMessage(string text)
+        {
+            if (networkStream != null && !string.IsNullOrEmpty(text))
+            {
+                try
+                {
+                    byte[] buffer = Encoding.UTF8.GetBytes(text);
+                    networkStream.Write(buffer, 0, buffer.Length);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Error sending text message: {ex.Message}");
+                }
+            }
+        }
+
+
         private void SendImage(string imagePath)
         {
             try
@@ -395,11 +360,10 @@ namespace Client
         private void button1_Click_1(object sender, EventArgs e)
         {
             string message = rtbInput.Text;
-            if (!string.IsNullOrEmpty(message))
-            {
+           
                 SendMessage(message);
                 rtbInput.Clear();
-            }
+            
         }
 
         private void radioButton1_CheckedChanged(object sender, EventArgs e)
@@ -428,14 +392,5 @@ namespace Client
             }
         }
 
-        private void rtbInput_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void flowLayoutPanel1_Paint(object sender, PaintEventArgs e)
-        {
-
-        }
     }
 }
